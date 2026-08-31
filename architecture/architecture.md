@@ -12,10 +12,10 @@ flowchart LR
     Golden -.-> DQ3["id-match regression"]
     Metrics -.-> DQ4["control-band anomaly"]
 
-    style Golden fill:#fff3bf,stroke:#f59e0b,stroke-width:2px
-    style Dashboard fill:#b2f2bb,stroke:#22c55e,stroke-width:2px
-    style DQ1 fill:#ffc9c9,stroke:#ef4444
-    style DQ2 fill:#ffc9c9,stroke:#ef4444
-    style DQ3 fill:#ffc9c9,stroke:#ef4444
-    style DQ4 fill:#ffc9c9,stroke:#ef4444
+        style Golden fill:#fff3bf,stroke:#f59e0b,stroke-width:2px,color:#1a1a1a
+    style Dashboard fill:#b2f2bb,stroke:#22c55e,stroke-width:2px,color:#1a1a1a
+    style DQ1 fill:#ffc9c9,stroke:#ef4444,color:#1a1a1a
+    style DQ2 fill:#ffc9c9,stroke:#ef4444,color:#1a1a1a
+    style DQ3 fill:#ffc9c9,stroke:#ef4444,color:#1a1a1a
+    style DQ4 fill:#ffc9c9,stroke:#ef4444,color:#1a1a1a
 ```
