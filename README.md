@@ -44,11 +44,8 @@ field can't be trusted either.
 
 ## How to reproduce
 
-```
-duckdb collections.duckdb < sql/01_golden_dataset.sql
-duckdb collections.duckdb < sql/02_metrics.sql
-duckdb collections.duckdb < sql/03_forensics.sql
-duckdb collections.duckdb < sql/04_counterfactual.sql
-```
+Open `notebook/analysis.ipynb` in VS Code (Jupyter extension) and Run All — the first cell
+loads the raw CSVs from `data/` and builds the golden dataset + metrics from the SQL files
+automatically. Everything else in the notebook runs from there.
 
 
