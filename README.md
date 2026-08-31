@@ -7,6 +7,14 @@ Short version: the 11% is real if you only look at Feb vs March. Look at the who
 and recovery is basically flat — January and July brought in almost the exact same amount.
 Full reasoning is in the memo.
 
+## Live dashboard
+
+https://arpitagoyal29.github.io/credresolve-analysis/dashboard/executive_dashboard.html
+
+Interactive — hover the charts for exact numbers, and there's a toggle at the top that
+switches between "what leadership saw" (just Feb vs March) and the full 7-month trend, so
+you can see the cherry-pick happen live.
+
 ## What's in here
 
 - `memo/` — 2-page executive memo, the main answer
