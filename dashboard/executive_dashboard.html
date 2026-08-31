@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CredResolve — Recovery Performance</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root{
+    --bg:#F7F8FA; --surface:#FFFFFF; --line:#E4E7EC; --ink:#1A1D23; --muted:#6B7280;
+    --navy:#2C4A6E; --navy-soft:#DCE6F0;
+    --amber:#B5702E; --amber-soft:#F5E4CF;
+    --green:#3D7A56; --green-soft:#DCEEE2;
+    --red:#B5432E;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:'IBM Plex Sans', system-ui, sans-serif;
+    padding:32px 44px 60px; max-width:1320px; margin:0 auto;
+  }
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  header{display:flex; justify-content:space-between; align-items:flex-end; border-bottom:1.5px solid var(--ink); padding-bottom:16px; margin-bottom:24px;}
+  h1{font-size:22px; font-weight:600; letter-spacing:-0.2px;}
+  .sub{color:var(--muted); font-size:13px; margin-top:4px;}
+  .datewin{font-size:12px; color:var(--muted); text-align:right;}
+  .datewin strong{color:var(--ink); font-family:'IBM Plex Mono', monospace;}
+
+  .hero{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:20px;}
+  .claim{background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:20px 24px;}
+  .claim.rep{border-left:4px solid var(--amber);}
+  .claim.act{border-left:4px solid var(--green);}
+  .claim-label{font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--muted); margin-bottom:8px;}
+  .claim-num{font-family:'IBM Plex Mono', monospace; font-size:44px; font-weight:600; line-height:1;}
+  .claim.rep .claim-num{color:var(--amber);}
+  .claim.act .claim-num{color:var(--green);}
+  .claim-desc{font-size:13px; color:var(--muted); margin-top:8px; line-height:1.5; max-width:58ch;}
+
+  .panel{background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:20px 24px; margin-bottom:20px;}
+  .panel-head{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;}
+  .panel h2{font-size:15px; font-weight:600;}
+
+  .toggle{display:flex; background:var(--bg); border:1px solid var(--line); border-radius:20px; padding:3px; font-size:12px;}
+  .toggle button{border:none; background:none; padding:6px 14px; border-radius:16px; cursor:pointer; color:var(--muted); font-family:'IBM Plex Sans'; font-weight:500;}
+  .toggle button.active{background:var(--ink); color:#fff;}
+
+  .chart-wrap{height:280px; position:relative;}
+  .caption{font-size:11.5px; color:var(--muted); margin-top:10px; line-height:1.5;}
+
+  .stats-row{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:20px;}
+  .stat{background:var(--surface); border:1px solid var(--line); border-radius:4px; padding:16px 18px;}
+  .stat .k{font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted);}
+  .stat .v{font-family:'IBM Plex Mono', monospace; font-size:24px; font-weight:600; margin-top:6px;}
+  .stat .flat{font-size:11px; color:var(--green); margin-top:3px;}
+
+  .grid2{display:grid; grid-template-columns:1.4fr 1fr; gap:20px;}
+  .badge{display:inline-block; font-size:10px; padding:2px 8px; border-radius:10px; letter-spacing:0.2px;}
+  .badge.low{background:var(--amber-soft); color:var(--amber);}
+
+  .reco{background:var(--navy-soft); border:1px solid #C4D5E6; border-radius:4px; padding:20px 24px;}
+  .reco h2{font-size:15px; font-weight:600; margin-bottom:8px;}
+  .reco .pick{font-family:'IBM Plex Mono', monospace; font-size:20px; color:var(--navy); font-weight:600; margin-bottom:8px;}
+  .reco p{font-size:12.5px; color:#3A4A5C; line-height:1.6;}
+  .reco .conf{font-size:11px; color:var(--amber); margin-top:10px; font-weight:500;}
+
+  footer{font-size:11px; color:var(--muted); margin-top:8px; border-top:1px solid var(--line); padding-top:12px; line-height:1.6;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>CredResolve — Recovery Performance</h1>
+    <div class="sub">Is the "+11% recovery" claim real, and where should the next ₹10 Cr go</div>
+  </div>
+  <div class="datewin">Data window<br><strong>Jan – Jul 2026</strong> (7 full months, verified)</div>
+</header>
+
+<div class="hero">
+  <div class="claim rep">
+    <div class="claim-label">Reported to leadership</div>
+    <div class="claim-num">+11%</div>
+    <div class="claim-desc">Month-on-month recovery growth. Correct — but only for one comparison: Feb → Mar.</div>
+  </div>
+  <div class="claim act">
+    <div class="claim-label">Full 7-month trend, independently verified</div>
+    <div class="claim-num">~0%</div>
+    <div class="claim-desc">Net change, January to July. Recovery has oscillated ₹170–190 Cr/month with no sustained direction.</div>
+  </div>
+</div>
+
+<div class="panel">
+  <div class="panel-head">
+    <h2>Monthly recovery (₹ Cr, gross successful payments)</h2>
+    <div class="toggle">
+      <button id="btnReported" class="active">What leadership saw</button>
+      <button id="btnFull">Full 7-month trend</button>
+    </div>
+  </div>
+  <div class="chart-wrap"><canvas id="recoveryChart"></canvas></div>
+  <div class="caption" id="chartCaption">Feb → Mar alone: a real +11.11% jump — this is the number that got reported. Hover the points for exact values.</div>
+</div>
+
+<div class="stats-row">
+  <div class="stat"><div class="k">Contact Rate</div><div class="v">~20%</div><div class="flat">flat every month, ±0.5pp</div></div>
+  <div class="stat"><div class="k">PTP Kept Rate</div><div class="v">~49–52%</div><div class="flat">flat every month, ±2pp</div></div>
+  <div class="stat"><div class="k">Recovery / Agent-Hour</div><div class="v">₹16.1–17.0k</div><div class="flat">flat every month, ±3%</div></div>
+</div>
+
+<div class="grid2">
+  <div class="panel" style="margin-bottom:0;">
+    <div class="panel-head">
+      <h2>Channel conversion — equal odds, unequal cost</h2>
+      <span class="badge low">built on 17% of payments that are attributable</span>
+    </div>
+    <div class="chart-wrap" style="height:220px;"><canvas id="channelChart"></canvas></div>
+    <div class="caption">83% of successful payments can't be traced to a campaign touch — this chart is suggestive, not conclusive. Hover a bar for touch count.</div>
+  </div>
+  <div class="reco">
+    <h2>₹10 Cr recommendation</h2>
+    <div class="pick">WhatsApp / Digital Engagement</div>
+    <p>Every channel converts contacts at roughly the same ~8% rate — so cost per attempt decides the winner, not effectiveness. Digital buys far more attempts per rupee than Field or Voice, at equal odds of success.</p>
+    <div class="conf">Confidence: moderate — recommend a 4–6 week attribution pilot before full deployment (cost &lt;₹10L)</div>
+  </div>
+</div>
+
+<footer>
+  Sources: golden_payments, monthly_metrics (see SQL repository). Figures exclude ~2,450 exact-duplicate event rows and a payment-reference collision trap that would have fabricated a ~25% fake decline if naively deduplicated. Full methodology in the Data Quality Report.
+</footer>
+
+<script>
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul'];
+const recovery = [187.23, 170.14, 188.91, 175.14, 184.25, 175.56, 187.24];
+
+const ctx = document.getElementById('recoveryChart').getContext('2d');
+const chart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: months,
+    datasets: [{
+      label: 'Recovered (₹ Cr)',
+      data: recovery,
+      borderColor: '#2C4A6E',
+      backgroundColor: 'rgba(44,74,110,0.08)',
+      pointBackgroundColor: months.map((m,i)=> (i===0||i===6) ? '#3D7A56' : '#2C4A6E'),
+      pointRadius: months.map((m,i)=> (i===0||i===6) ? 6 : 4),
+      pointHoverRadius: 7,
+      borderWidth: 2.5,
+      tension: 0.25,
+      fill: true,
+    }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: { label: (c) => `₹${c.parsed.y.toFixed(1)} Cr` },
+        backgroundColor: '#1A1D23', padding: 10, titleFont: {family:'IBM Plex Mono'}, bodyFont:{family:'IBM Plex Mono'}
+      }
+    },
+    scales: {
+      y: { min: 160, max: 195, grid: { color: '#EEF0F3' }, ticks: { callback: (v)=>'₹'+v, font:{family:'IBM Plex Mono', size:11} } },
+      x: { grid: { display: false }, ticks: { font:{family:'IBM Plex Sans', size:12} } }
+    }
+  }
+});
+
+const btnReported = document.getElementById('btnReported');
+const btnFull = document.getElementById('btnFull');
+const caption = document.getElementById('chartCaption');
+
+btnReported.onclick = () => {
+  btnReported.classList.add('active'); btnFull.classList.remove('active');
+  chart.data.labels = ['Feb','Mar'];
+  chart.data.datasets[0].data = [170.14, 188.91];
+  chart.data.datasets[0].pointBackgroundColor = ['#2C4A6E','#2C4A6E'];
+  chart.data.datasets[0].pointRadius = [5,5];
+  chart.options.scales.y.min = 160; chart.options.scales.y.max = 195;
+  chart.update();
+  caption.textContent = 'Feb → Mar alone: a real +11.11% jump — this is the number that got reported. Hover the points for exact values.';
+};
+
+btnFull.onclick = () => {
+  btnFull.classList.add('active'); btnReported.classList.remove('active');
+  chart.data.labels = months;
+  chart.data.datasets[0].data = recovery;
+  chart.data.datasets[0].pointBackgroundColor = months.map((m,i)=> (i===0||i===6) ? '#3D7A56' : '#2C4A6E');
+  chart.data.datasets[0].pointRadius = months.map((m,i)=> (i===0||i===6) ? 6 : 4);
+  chart.update();
+  caption.textContent = 'Same data, full window. January and July (green points) recovered almost the exact same amount — the trend is flat, not improving.';
+};
+
+const channelCtx = document.getElementById('channelChart').getContext('2d');
+new Chart(channelCtx, {
+  type: 'bar',
+  data: {
+    labels: ['WhatsApp','SMS','Voice','Field'],
+    datasets: [{
+      label: 'Conversion rate',
+      data: [7.98, 8.04, 8.04, 8.01],
+      backgroundColor: ['#2C4A6E','#2C4A6E','#2C4A6E','#2C4A6E'],
+      borderRadius: 3,
+      barThickness: 34,
+    }]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: (c) => `${c.parsed.x}% conversion`,
+          afterLabel: (c) => {
+            const touches = {WhatsApp:9532, SMS:8884, Voice:6681, Field:6058};
+            return touches[c.label] + ' touches';
+          }
+        },
+        backgroundColor: '#1A1D23', padding: 10
+      }
+    },
+    scales: {
+      x: { min: 7.5, max: 8.5, grid: { color: '#EEF0F3' }, ticks: { callback:(v)=>v+'%', font:{family:'IBM Plex Mono', size:11} } },
+      y: { grid: { display:false }, ticks: { font:{family:'IBM Plex Sans', size:12} } }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
